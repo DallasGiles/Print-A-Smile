@@ -1,5 +1,5 @@
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../components/navBar';
+import Footer from '../components/footer';
 //imports header and footer for repeated use
 const About = () => (
     <div>
