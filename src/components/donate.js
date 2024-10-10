@@ -34,27 +34,6 @@ const Donate = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <CardElement
-          options={{
-            style: {
-              base: {
-                fontSize: '16px',
-                color: '#32325d',
-                '::placeholder': {
-                  color: '#aab7c4',
-                },
-              },
-              invalid: {
-                color: '#fa755a',
-              },
-            },
-          }}
-        />
-        <button type="submit" disabled={!stripe}>
-          Donate Now (Card Payment)
-        </button>
-      </form>
       <button onClick={handleDonateClick} style={{ marginTop: '20px' }}>
         Donate with Stripe Checkout
       </button>
