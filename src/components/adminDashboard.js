@@ -4,9 +4,21 @@ const AdminDashboard = () => {
     const [contacts, setContacts] = useState([]);
 
     useEffect(() => {
-        fetch('/api/contact')
-            .then((res) => res.json())
-            .then((data) => setContacts(data));
+        const fetchContacts = async () => {
+            try {
+                const response = await fetch('/api/contact');
+                if (response.ok) {
+                    const data = await response.json();
+                    setContacts(data);
+                } else {
+                    console.error('Failed to fetch contacts');
+                }
+            } catch (error) {
+                console.error('Error fetching contacts:', error);
+            }
+        };
+
+        fetchContacts();
     }, []);
 
     return (
