@@ -9,20 +9,24 @@ import AdminDashboard from './components/adminDashboard';
 import Donate from './components/donate';
 
 const App = () => {
-    const ref = useRef(null); // Correctly using useRef inside the component
+    const ref = useRef(null);
 
     return (
-        <Router>
-            <Navbar />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/donate" element={<Donate />} />
-            </Routes>
-            <Footer />
-        </Router>
+        <div className="min-h-screen flex flex-col">
+            <Router>
+                <Navbar />
+                <main className="flex-grow">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/admin" element={<AdminDashboard />} />
+                        <Route path="/donate" element={<Donate />} />
+                    </Routes>
+                </main>
+                <Footer />
+            </Router>
+        </div>
     );
 };
 
