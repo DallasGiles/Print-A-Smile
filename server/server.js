@@ -2,20 +2,39 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const mongoose = require('mongoose');
+const Comment = require('./models/Comment'); // Import the model
 const app = express();
 app.use(express.json());
 app.use(cors()); 
 
-const contacts = []; // Temporary storage
 
-app.post('/api/contact', (req, res) => {
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB is connected'))
+.catch(err => console.error('Connection error', err));
+
+app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
-    contacts.push({ name, email, message });
-    res.status(201).send('Message received');
+
+    try {
+        const newComment = new Comment({ name, email, message });
+        await newComment.save();
+        res.status(201).send('Message received');
+    } catch (error) {
+        res.status(500).send('Failed to save comment');
+    }
 });
 
-app.get('/api/contact', (req, res) => {
-    res.json(contacts); // Retrieve submitted messages
+app.get('/api/contact', async (req, res) => {
+    try {
+        const contacts = await Comment.find(); // Retrieve from the database
+        res.json(contacts);
+    } catch (error) {
+        res.status(500).send('Failed to retrieve comments');
+    }
 });
 //stripe down below
 app.post('/api/create-payment-intent', async (req, res) => {
@@ -59,14 +78,28 @@ app.post('/api/create-payment-intent', async (req, res) => {
     }
 });
 
-  app.delete('/api/contact/:index', (req, res) => {
-    const index = req.params.index;
-    if (index >= 0 && index < contacts.length) {
-        contacts.splice(index, 1);
-        res.status(200).send({ message: 'Comment deleted successfully' });
-    } else {
-        res.status(404).send({ message: 'Comment not found' });
-    }
+ // Delete a comment by its MongoDB ID
+ app.delete('/api/contact/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      console.log(`Deleting comment with id: ${id}`); // Log to verify ID
+
+      // Check if it's a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+          return res.status(400).send({ message: 'Invalid ID' });
+      }
+
+      const deletedComment = await Comment.findByIdAndDelete(id);
+      
+      if (!deletedComment) {
+          return res.status(404).send({ message: 'Comment not found' });
+      }
+
+      res.status(200).send({ message: 'Comment deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting comment:', error);
+      res.status(500).send({ message: 'Failed to delete comment' });
+  }
 });
 
 const PORT = process.env.PORT || 3001;
