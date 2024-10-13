@@ -48,6 +48,17 @@ app.post('/api/create-payment-intent', async (req, res) => {
     res.json({ id: session.id });
   });
 
+  app.post('/api/admin-login', (req, res) => {
+    const { password } = req.body;
+    const adminPassword = process.env.ADMIN_PASSWORD
+
+    if (password === adminPassword) {
+        res.status(200).send({ success: true });
+    } else {
+        res.status(401).send({ success: false, message: 'Incorrect password' });
+    }
+});
+
   app.delete('/api/contact/:index', (req, res) => {
     const index = req.params.index;
     if (index >= 0 && index < contacts.length) {
