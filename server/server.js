@@ -47,5 +47,16 @@ app.post('/api/create-payment-intent', async (req, res) => {
   
     res.json({ id: session.id });
   });
+
+  app.delete('/api/contact/:index', (req, res) => {
+    const index = req.params.index;
+    if (index >= 0 && index < contacts.length) {
+        contacts.splice(index, 1);
+        res.status(200).send({ message: 'Comment deleted successfully' });
+    } else {
+        res.status(404).send({ message: 'Comment not found' });
+    }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
