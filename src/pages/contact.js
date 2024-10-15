@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { db } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore'; 
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -14,17 +16,20 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${process.env.REACT_APP_API_URL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-    if (response.ok) {
+
+    try {
+      // Add form data to the 'contacts' collection in Firestore
+      await addDoc(collection(db, 'contacts'), {
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        timestamp: new Date()
+      });
+
       alert('Message sent successfully');
       setFormData({ name: '', email: '', message: '' });
-    } else {
+    } catch (error) {
+      console.error("Error adding message: ", error);
       alert('Failed to send message');
     }
   };

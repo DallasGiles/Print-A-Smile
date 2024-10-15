@@ -29,3 +29,10 @@ coverage/
 
 # Miscellaneous
 *.swp
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Firebase cache files
+.firebaserc
